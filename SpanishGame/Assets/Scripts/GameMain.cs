@@ -34,7 +34,7 @@ public class GameMain : MonoBehaviour {
         //RoundWinner(2);
         phase = 0;
         runningPhase = false;
-        questions.Add(new Question("Fill in the blank lol?", new List<string> { "sup" , "lol", "ok"}, 1) );
+        questions.Add(new Question("say sup,lol, or ok?", new List<string> { "sup" , "lol", "ok"}, 1) );
     }
 	
 	// Update is called once per frame
@@ -65,13 +65,13 @@ public class GameMain : MonoBehaviour {
     {
         instructor.GetComponentInChildren<Text>().text = questions[curQuestion].question;
 
-        bh.p1B1.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].answers[0];
-        bh.p1B2.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].answers[1];
-        bh.p1B3.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].answers[2];
+        bh.p1B1.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[0];
+        bh.p1B2.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[1];
+        bh.p1B3.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[2];
 
-        bh.p2B1.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].answers[0];
-        bh.p2B2.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].answers[1];
-        bh.p2B3.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].answers[2];
+        bh.p2B1.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[0];
+        bh.p2B2.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[1];
+        bh.p2B3.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[2];
     }
     IEnumerator Results()
     {

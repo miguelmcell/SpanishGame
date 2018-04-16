@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Question : MonoBehaviour {
     public string question;
-    public List<string> answers;
+    public List<string> choices;
     public int correntAns;
 	// Use this for initialization
 	void Start () {
@@ -13,8 +13,8 @@ public class Question : MonoBehaviour {
     public Question(string q, List<string> a, int c)
     {
         question = q;
-        answers = a;
-        correntAns = c;//correct answer is from 1-3 one for every person's button
+        choices = a;
+        correntAns = c;//correct answer is from 0-2 one for every person's button
     }
 	
 	// Update is called once per frame
