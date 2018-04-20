@@ -11,6 +11,7 @@ public class GameMain : MonoBehaviour {
     public Text p2;//should probably show a tutorial of the game
     public Text timer;
     public GameObject instructor;
+    public GameObject leaderboard;
     int phase;//0 = startup everything on the screen, 1 = show up the question, 2 = start counting to 0 to pop up the answers, 3 = results, wait till a response from player, if nothing for 10 seconds, go on to the next quesiton
     public bool runningPhase;
     public bool waitingInput;
@@ -24,7 +25,7 @@ public class GameMain : MonoBehaviour {
 
 
     // Use this for initialization
-    void Start () {
+    void Start () {//888888888888888888888888888888888888888888888888888888Next step is to hide the example and options before the timer finishes
         curQuestion = 0;
         currentButton = -1;
         timer.text = "3";
@@ -34,13 +35,16 @@ public class GameMain : MonoBehaviour {
         //RoundWinner(2);
         phase = 0;
         runningPhase = false;
-        questions.Add(new Question("say sup,lol, or ok?", new List<string> { "sup" , "lol", "ok"}, 1) );
+        questions.Add(new Question("Fill in the blank in the sentence", new List<string> { "llamas" , "idk", "loss"}, 0,1, "Hola como te") );
+        questions.Add(new Question("this is new,lol, society?", new List<string> { "soap", "paper", "yep" }, 1,1));
     }
 	
 	// Update is called once per frame
 	void Update () {
-        if (!runningPhase)
+        //print("phase value: " + phase + ", runningPhase value: " + runningPhase);
+        if (runningPhase == false)
         {
+            //print("herro with phase: " + phase);
             if (phase == 0)
             {
                 loadQuestion();
@@ -58,6 +62,16 @@ public class GameMain : MonoBehaviour {
             {
                 StartCoroutine("Results");
             }
+            else if (phase == 4)
+            {
+                //print("starting next question");
+                StartCoroutine("NextQuestion");
+            }
+            else if(phase == 5)
+            {
+                StartCoroutine("End");
+                print("sup");
+            }
             runningPhase = true;
         }
     }
@@ -69,9 +83,83 @@ public class GameMain : MonoBehaviour {
         bh.p1B2.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[1];
         bh.p1B3.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[2];
 
+        Transform options = instructor.transform.parent.GetChild(7);
+
+        options.GetChild(0).GetComponentInChildren<Text>().text = questions[curQuestion].choices[0];
+        options.GetChild(1).GetComponentInChildren<Text>().text = questions[curQuestion].choices[1];
+        options.GetChild(2).GetComponentInChildren<Text>().text = questions[curQuestion].choices[2];
+
         bh.p2B1.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[0];
         bh.p2B2.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[1];
         bh.p2B3.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[2];
+    }
+    IEnumerator End()
+    {
+        bool done = false;
+        string stat = "";
+        if (p1Score > p2Score)
+            stat = "Player 1 wins";
+        else if (p2Score > p1Score)
+        {
+            stat = "Player 2 wins";
+        }
+        else
+        {
+            stat = "Its a draw";
+        }
+        instructor.transform.parent.GetChild(5).GetComponentInChildren<Text>().text = stat;
+        //float timer = 0;
+        while (!done)//while question is not in the middle youre going to keep going towards it
+        {
+            //go towards 0 from 285, then from 285 to -285
+            //yield return null;
+            if (instructor.transform.parent.GetChild(5).GetComponent<RectTransform>().anchoredPosition.y > 0)//470****************-0.05373612
+                instructor.transform.parent.GetChild(5).GetComponent<RectTransform>().anchoredPosition = new Vector2(0, Mathf.Lerp(instructor.transform.parent.GetChild(5).GetComponent<RectTransform>().anchoredPosition.y, -5, 0.05f));
+            else if (instructor.GetComponent<RectTransform>().anchoredPosition.y <= 0)
+            {
+                //print("now counting see - " + timer);
+                done = !done;
+                //timer += Time.deltaTime;
+            }
+            //if (instructor.GetComponent<RectTransform>().anchoredPosition.y <= -280)
+            //{
+                //print("Cat is in the bag!");
+                
+            //}
+            //if (timer > 2)
+            //{
+             //   instructor.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, Mathf.Lerp(instructor.GetComponent<RectTransform>().anchoredPosition.y, -300, 0.03f));
+              //  //print("timer is above 5");
+            //}
+            yield return new WaitForSeconds(0.01f);
+
+        }
+        //----------------------experimental
+        //phase = 1;
+        //runningPhase = false;
+        //-----------------------
+        yield return null;
+    }
+    IEnumerator NextQuestion()
+    {
+        //reset values
+        currentButton = -1;
+        timer.text = "3";
+        timer.color = Color.green;
+        instructor.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 300);
+
+        bool done = false;
+        while (!done)
+        {//do while timer is not 0 then keep 
+            curQuestion++;//will have to check if theres still more before incrementing
+            yield return new WaitForSeconds(0.005f);
+            //yield return new WaitForSeconds(0.01f);
+            done = !done;
+        }
+        phase = 0;
+        //print("exiting play");
+        runningPhase = false;
+        yield return null;
     }
     IEnumerator Results()
     {
@@ -79,7 +167,6 @@ public class GameMain : MonoBehaviour {
         bool done = false;
         while (!done)
         {//do while timer is not 0 then keep 
-            //* NEXT OBJECTIVE: CALCULATE WICH WAS THE RIGHT ANSWER
             if((currentButton % 3)  == questions[curQuestion].correntAns)
             {
                 //so its correct, now which player got it correct?
@@ -97,14 +184,20 @@ public class GameMain : MonoBehaviour {
                     // player 2 got it wrong!
                     Wrong(2);
             }
-            
+            yield return new WaitForSeconds(2f);
             done = !done;
             //yield return new WaitForSeconds(0.01f);
         }
 
-        //phase = 3;
-        
-        //print("exiting play");
+        if (curQuestion >= questions.Count-1)//its because it hasnt been added 1 to curQuestion
+        {
+            phase = 5;
+        }
+        else
+        {
+            phase = 4;
+        }
+        //print("exiting results");
         runningPhase = false;
         yield return null;
     }
@@ -211,6 +304,7 @@ public class GameMain : MonoBehaviour {
             timer.text = "Player 2: Correct";
         }
         SetScore();
+        leaderboard.GetComponents<AudioSource>()[0].Play();
     }
     public void Wrong(int looser)
     {
@@ -226,6 +320,7 @@ public class GameMain : MonoBehaviour {
             timer.text = "Player 2: Wrong";
         }
         SetScore();
+        leaderboard.GetComponents<AudioSource>()[1].Play();
     }
     void SetScore()
     {
