@@ -17,7 +17,8 @@ public class Question : MonoBehaviour {
         question = q;
         choices = a;
         correntAns = c;//correct answer is from 0-2 one for every person's button
-        t = type;//1 = fill in the blank, 2 = scrambled word and categorize, 3 = correct congegated word
+        example = "";
+        type = t;//1 = fill in the blank, 2 = scrambled word and categorize, 3 = correct congegated word
     }
     public Question(string q, List<string> a, int c, int t, string s)
     {
@@ -25,7 +26,7 @@ public class Question : MonoBehaviour {
         choices = a;
         example = s;
         correntAns = c;//correct answer is from 0-2 one for every person's button
-        t = type;//1 = fill in the blank, 2 = scrambled word and categorize, 3 = correct congegated word
+        type = t;//1 = fill in the blank, 2 = scrambled word and categorize, 3 = correct congegated word
     }
 
     // Update is called once per frame

@@ -18,7 +18,9 @@ public class GameMain : MonoBehaviour {
     int currentButton;
     public List<Question> questions;
     public int curQuestion;
-    
+    public GameObject problemText;
+    Transform options;
+
     //tool pouch
     //StartCoroutine("CountDown");
     //
@@ -26,6 +28,11 @@ public class GameMain : MonoBehaviour {
 
     // Use this for initialization
     void Start () {//888888888888888888888888888888888888888888888888888888Next step is to hide the example and options before the timer finishes
+        options = instructor.transform.parent.GetChild(4);
+        problemText.GetComponent<Text>().enabled = false;
+        options.GetChild(0).GetComponentInChildren<Text>().enabled = false;
+        options.GetChild(1).GetComponentInChildren<Text>().enabled = false;
+        options.GetChild(2).GetComponentInChildren<Text>().enabled = false;
         curQuestion = 0;
         currentButton = -1;
         timer.text = "3";
@@ -35,7 +42,7 @@ public class GameMain : MonoBehaviour {
         //RoundWinner(2);
         phase = 0;
         runningPhase = false;
-        questions.Add(new Question("Fill in the blank in the sentence", new List<string> { "llamas" , "idk", "loss"}, 0,1, "Hola como te") );
+        questions.Add(new Question("Fill in the blank in the sentence", new List<string> { "llamas" , "loco", "no"}, 0,1, "Hola como te ___") );
         questions.Add(new Question("this is new,lol, society?", new List<string> { "soap", "paper", "yep" }, 1,1));
     }
 	
@@ -77,13 +84,16 @@ public class GameMain : MonoBehaviour {
     }
     void loadQuestion()
     {
+        print(questions[curQuestion].type);
+        if(questions[curQuestion].type == 1)
+        {
+            problemText.GetComponent<Text>().text = questions[curQuestion].example;
+        }
         instructor.GetComponentInChildren<Text>().text = questions[curQuestion].question;
 
         bh.p1B1.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[0];
         bh.p1B2.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[1];
         bh.p1B3.gameObject.GetComponentInChildren<Text>().text = questions[curQuestion].choices[2];
-
-        Transform options = instructor.transform.parent.GetChild(7);
 
         options.GetChild(0).GetComponentInChildren<Text>().text = questions[curQuestion].choices[0];
         options.GetChild(1).GetComponentInChildren<Text>().text = questions[curQuestion].choices[1];
@@ -107,14 +117,14 @@ public class GameMain : MonoBehaviour {
         {
             stat = "Its a draw";
         }
-        instructor.transform.parent.GetChild(5).GetComponentInChildren<Text>().text = stat;
+        instructor.transform.parent.GetChild(7).GetComponentInChildren<Text>().text = stat;
         //float timer = 0;
         while (!done)//while question is not in the middle youre going to keep going towards it
         {
             //go towards 0 from 285, then from 285 to -285
             //yield return null;
-            if (instructor.transform.parent.GetChild(5).GetComponent<RectTransform>().anchoredPosition.y > 0)//470****************-0.05373612
-                instructor.transform.parent.GetChild(5).GetComponent<RectTransform>().anchoredPosition = new Vector2(0, Mathf.Lerp(instructor.transform.parent.GetChild(5).GetComponent<RectTransform>().anchoredPosition.y, -5, 0.05f));
+            if (instructor.transform.parent.GetChild(7).GetComponent<RectTransform>().anchoredPosition.y > 0)//470****************-0.05373612
+                instructor.transform.parent.GetChild(7).GetComponent<RectTransform>().anchoredPosition = new Vector2(0, Mathf.Lerp(instructor.transform.parent.GetChild(7).GetComponent<RectTransform>().anchoredPosition.y, -5, 0.05f));
             else if (instructor.GetComponent<RectTransform>().anchoredPosition.y <= 0)
             {
                 //print("now counting see - " + timer);
@@ -146,6 +156,7 @@ public class GameMain : MonoBehaviour {
         currentButton = -1;
         timer.text = "3";
         timer.color = Color.green;
+        problemText.GetComponent<Text>().enabled = false;
         instructor.GetComponent<RectTransform>().anchoredPosition = new Vector2(0, 300);
 
         bool done = false;
@@ -220,6 +231,11 @@ public class GameMain : MonoBehaviour {
         //print("starting play");
         bool done = false;
         waitingInput = true;
+        problemText.GetComponent<Text>().enabled = true;
+        options.GetChild(0).GetComponentInChildren<Text>().enabled = true;
+        options.GetChild(1).GetComponentInChildren<Text>().enabled = true;
+        options.GetChild(2).GetComponentInChildren<Text>().enabled = true;
+        //problemText.GetComponent<Text>().text = "bottom text";
         while (!done)
         {//do while timer is not 0 then keep 
             //print("sup");

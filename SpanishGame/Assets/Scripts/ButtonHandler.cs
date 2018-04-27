@@ -40,7 +40,7 @@ public class ButtonHandler : MonoBehaviour {
 		
 	}
 
-    void TaskOnClick(int i)
+    public void TaskOnClick(int i)
     {
         gm.getInput(i);
     }
